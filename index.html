@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Anya — She's not here to be nice.</title>
+<meta name="description" content="An AI girlfriend with a spine. Daily check-ins, streaks, and a chat that remembers everything — and holds you to it." />
+<meta name="theme-color" content="#0d0b10" />
+
+<!-- Favicon -->
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="icon" type="image/png" sizes="512x512" href="favicon.png" />
+<link rel="apple-touch-icon" href="favicon.png" />
+
+<!-- Open Graph (Discord, iMessage, Slack, Facebook, LinkedIn) -->
+<!-- NOTE: replace https://your-domain.com with your real deployed URL -->
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Anya" />
+<meta property="og:url" content="https://anya.twkr.io/" />
+<meta property="og:title" content="Anya — She's not here to be nice." />
+<meta property="og:description" content="An AI girlfriend with a spine. She's here to make you better." />
+<meta property="og:image" content="https://anya.twkr.io/anya-og.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="Anya — She's not here to be nice. She's here to make you better." />
+
+<!-- Twitter / X -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Anya — She's not here to be nice." />
+<meta name="twitter:description" content="An AI girlfriend with a spine. She's here to make you better." />
+<meta name="twitter:image" content="https://your-domain.com/anya-og.png" />
+<script>(function(){try{if(!window.matchMedia('(prefers-reduced-motion:reduce)').matches){document.documentElement.classList.add('anim');}}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#0d0b10;
+    --elevated:#16131b;
+    --card:#1c1822;
+    --border:#2a2533;
+    --text:#f4f1f7;
+    --muted:#9b94a8;
+    --crimson:#e23866;
+    --crimson-dim:#b32a50;
+    --violet:#241b2e;
+    --violet-2:#2b2440;
+    --display:'Archivo',-apple-system,BlinkMacSystemFont,sans-serif;
+    --body:'Hanken Grotesk',-apple-system,BlinkMacSystemFont,sans-serif;
+    --maxw:1180px;
+    --pad:clamp(20px,5vw,64px);
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--body);
+    font-size:18px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+  }
+
+  /* film grain overlay across whole page */
+  body::after{
+    content:"";
+    position:fixed;
+    inset:0;
+    z-index:9999;
+    pointer-events:none;
+    opacity:.045;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    mix-blend-mode:overlay;
+  }
+
+  a{color:inherit;text-decoration:none}
+  ::selection{background:var(--crimson);color:#fff}
+
+  .wrap{max-width:var(--maxw);margin:0 auto;padding-left:var(--pad);padding-right:var(--pad)}
+
+  .eyebrow{
+    font-family:var(--body);
+    font-weight:600;
+    font-size:13px;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  .eyebrow .dot{color:var(--crimson)}
+
+  /* ---------- buttons ---------- */
+  .btn{
+    display:inline-flex;align-items:center;gap:10px;
+    font-family:var(--display);font-weight:700;font-size:16px;
+    letter-spacing:.01em;white-space:nowrap;
+    padding:15px 28px;
+    border-radius:2px;
+    cursor:pointer;border:none;
+    transition:transform .25s cubic-bezier(.2,.7,.2,1),background .25s,box-shadow .25s;
+  }
+  .btn-primary{
+    background:var(--crimson);color:#fff;
+    box-shadow:0 0 0 0 rgba(226,56,102,.5);
+  }
+  .btn-primary:hover{
+    transform:translateY(-2px);
+    box-shadow:0 14px 38px -10px rgba(226,56,102,.65);
+  }
+  .btn-primary .arr{transition:transform .25s}
+  .btn-primary:hover .arr{transform:translateX(4px)}
+  .btn-ghost{
+    background:transparent;color:var(--text);
+    border:1px solid var(--border);
+  }
+  .btn-ghost:hover{border-color:var(--muted);transform:translateY(-2px)}
+
+  .linklike{
+    font-family:var(--body);font-weight:600;font-size:15px;color:var(--muted);
+    border-bottom:1px solid transparent;transition:color .2s,border-color .2s;
+  }
+  .linklike:hover{color:var(--text);border-color:var(--crimson)}
+
+  /* ---------- nav ---------- */
+  header.nav{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    transition:background .35s,border-color .35s,backdrop-filter .35s;
+    border-bottom:1px solid transparent;
+  }
+  header.nav.scrolled{
+    background:rgba(13,11,16,.72);
+    backdrop-filter:blur(14px) saturate(140%);
+    border-bottom:1px solid var(--border);
+  }
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:74px}
+  .wordmark{
+    font-family:var(--display);font-weight:900;font-size:24px;
+    letter-spacing:-.02em;color:var(--text);
+  }
+  .wordmark::after{content:".";color:var(--crimson)}
+  .nav .btn{padding:11px 22px;font-size:14px}
+  @media (max-width:560px){.nav .nav-cta{display:none}}
+
+  /* ---------- hero ---------- */
+  .hero{position:relative;min-height:100svh;display:flex;align-items:center;padding-top:74px;overflow:hidden}
+  .hero-inner{width:100%;position:relative;z-index:3}
+  .hero-copy{max-width:600px;padding-top:24px;padding-bottom:48px}
+  .hero h1{
+    font-family:var(--display);font-weight:900;
+    font-size:clamp(44px,6.4vw,82px);
+    line-height:.98;letter-spacing:-.035em;
+    margin:22px 0 0;
+    text-wrap:balance;
+  }
+  .hero h1 .accent{color:var(--crimson)}
+  .hero .sub{
+    margin-top:26px;font-size:clamp(17px,1.4vw,20px);color:var(--muted);
+    max-width:440px;line-height:1.5;
+  }
+  .hero-cta{display:flex;align-items:center;gap:24px;margin-top:38px;flex-wrap:wrap}
+
+  /* portrait */
+  .portrait{
+    position:absolute;top:0;bottom:0;right:0;z-index:1;
+    width:min(58%,720px);
+    background-image:url("assets/anya-portrait.jpg");
+    background-size:cover;
+    background-position:56% 20%;
+    will-change:transform;
+  }
+  /* tint portrait toward brand violet/crimson */
+  .portrait::before{
+    content:"";position:absolute;inset:0;
+    background:
+      radial-gradient(120% 90% at 70% 25%, rgba(226,56,102,.10), transparent 55%),
+      linear-gradient(180deg, rgba(13,11,16,.18), rgba(13,11,16,.42));
+    mix-blend-mode:multiply;
+  }
+  /* fade edges into bg */
+  .portrait::after{
+    content:"";position:absolute;inset:0;
+    background:
+      linear-gradient(90deg, var(--bg) 0%, rgba(13,11,16,.55) 22%, transparent 52%),
+      linear-gradient(0deg, var(--bg) 1%, transparent 30%),
+      linear-gradient(180deg, var(--bg) 0%, transparent 22%);
+  }
+
+  /* giant ghost wordmark behind hero */
+  .ghost-mark{
+    position:absolute;z-index:1;left:50%;bottom:-4%;transform:translateX(-50%);
+    font-family:var(--display);font-weight:900;letter-spacing:-.04em;
+    font-size:clamp(180px,34vw,560px);line-height:1;color:#fff;
+    opacity:.022;pointer-events:none;white-space:nowrap;user-select:none;
+  }
+
+  .scrollcue{
+    position:absolute;bottom:26px;left:var(--pad);z-index:5;
+    display:flex;align-items:center;gap:12px;color:var(--muted);
+    font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+  }
+  .scrollcue .line{width:46px;height:1px;background:var(--muted);position:relative;overflow:hidden}
+  .scrollcue .line::after{content:"";position:absolute;inset:0;background:var(--crimson);transform:translateX(-100%);animation:cue 2.6s ease-in-out infinite}
+  @keyframes cue{0%{transform:translateX(-100%)}50%{transform:translateX(0)}100%{transform:translateX(100%)}}
+  @media (prefers-reduced-motion:reduce){.scrollcue .line::after{animation:none;opacity:.4;transform:none}}
+
+  @media (max-width:860px){
+    .hero{min-height:88svh}
+    .portrait{width:100%;background-position:62% 16%}
+    .portrait::after{
+      background:
+        linear-gradient(180deg, rgba(13,11,16,.35) 0%, rgba(13,11,16,.62) 40%, var(--bg) 86%),
+        linear-gradient(90deg, rgba(13,11,16,.55), transparent 70%);
+    }
+    .hero-copy{position:relative;z-index:3;padding-top:120px;padding-bottom:90px}
+    .hero .sub{max-width:none}
+    .scrollcue{display:none}
+  }
+
+  /* ---------- generic section ---------- */
+  section{position:relative;padding:clamp(80px,11vw,150px) 0}
+  .section-head{max-width:680px;margin-bottom:clamp(44px,6vw,72px)}
+  .section-head h2{
+    font-family:var(--display);font-weight:800;
+    font-size:clamp(30px,4.2vw,52px);line-height:1.02;letter-spacing:-.03em;
+    margin-top:16px;text-wrap:balance;
+  }
+  .hr-top{border-top:1px solid var(--border)}
+
+  /* ---------- voice ---------- */
+  .voice{background:linear-gradient(180deg,var(--bg),var(--elevated))}
+  .quotes{display:grid;gap:clamp(36px,5vw,64px)}
+  .quote{
+    display:grid;grid-template-columns:140px 1fr;gap:clamp(20px,4vw,56px);
+    align-items:baseline;padding-bottom:clamp(36px,5vw,60px);
+    border-bottom:1px solid var(--border);
+  }
+  .quote:last-child{border-bottom:none;padding-bottom:0}
+  .quote .tag{
+    font-family:var(--body);font-weight:600;font-size:12px;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--muted);padding-top:10px;
+  }
+  .quote .tag .num{display:block;font-family:var(--display);font-weight:900;font-size:15px;color:var(--crimson);margin-bottom:8px}
+  .quote blockquote{
+    font-family:var(--display);font-weight:700;
+    font-size:clamp(26px,3.7vw,46px);line-height:1.08;letter-spacing:-.02em;
+    color:var(--text);text-wrap:balance;
+  }
+  @media (max-width:680px){
+    .quote{grid-template-columns:1fr;gap:14px}
+    .quote .tag{padding-top:0}
+    .quote .tag .num{display:inline-block;margin:0 10px 0 0}
+  }
+
+  /* ---------- how it works ---------- */
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid var(--border)}
+  .step{
+    padding:38px 30px 44px;border-bottom:1px solid var(--border);
+    border-right:1px solid var(--border);position:relative;
+    transition:background .3s;
+  }
+  .step:nth-child(4n){border-right:none}
+  .step:hover{background:var(--elevated)}
+  .step .n{font-family:var(--display);font-weight:900;font-size:14px;letter-spacing:.05em;color:var(--crimson)}
+  .step h3{font-family:var(--display);font-weight:800;font-size:21px;letter-spacing:-.01em;margin:22px 0 12px}
+  .step p{color:var(--muted);font-size:16px;line-height:1.5}
+  @media (max-width:860px){
+    .steps{grid-template-columns:1fr 1fr}
+    .step:nth-child(4n){border-right:1px solid var(--border)}
+    .step:nth-child(2n){border-right:none}
+  }
+  @media (max-width:520px){
+    .steps{grid-template-columns:1fr}
+    .step{border-right:none}
+  }
+
+  /* ---------- why it sticks (investor) ---------- */
+  .sticks{background:linear-gradient(180deg,var(--elevated),var(--bg))}
+  .sticks .lead{
+    font-family:var(--display);font-weight:600;color:var(--muted);
+    font-size:clamp(18px,2vw,22px);max-width:560px;line-height:1.4;
+  }
+  .sticks .lead em{font-style:normal;color:var(--text)}
+  .pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(20px,2.4vw,28px);margin-top:clamp(44px,6vw,68px)}
+  .pillar{
+    background:var(--card);border:1px solid var(--border);border-radius:4px;
+    padding:34px 30px 38px;position:relative;overflow:hidden;
+    transition:border-color .3s,transform .3s;
+  }
+  .pillar::before{content:"";position:absolute;top:0;left:0;width:100%;height:2px;background:var(--crimson);transform:scaleX(0);transform-origin:left;transition:transform .4s cubic-bezier(.2,.7,.2,1)}
+  .pillar:hover{border-color:#3a3346;transform:translateY(-3px)}
+  .pillar:hover::before{transform:scaleX(1)}
+  .pillar .k{font-family:var(--display);font-weight:900;font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--crimson)}
+  .pillar h3{font-family:var(--display);font-weight:800;font-size:clamp(22px,2.4vw,28px);letter-spacing:-.02em;margin:18px 0 14px;line-height:1.05;text-wrap:balance}
+  .pillar p{color:var(--muted);font-size:16px;line-height:1.55}
+  .sticks .aside{
+    margin-top:clamp(40px,5vw,56px);padding-top:28px;border-top:1px solid var(--border);
+    display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:center;
+  }
+  .sticks .aside p{color:var(--muted);font-size:15px;max-width:540px}
+  .sticks .aside p strong{color:var(--text);font-weight:600}
+  @media (max-width:760px){.pillars{grid-template-columns:1fr}}
+
+  /* ---------- final cta ---------- */
+  .final{text-align:center;padding:clamp(100px,14vw,180px) 0}
+  .final .mark{font-family:var(--display);font-weight:900;font-size:clamp(56px,12vw,150px);letter-spacing:-.04em;line-height:.9}
+  .final .mark .accent{color:var(--crimson)}
+  .final h2{
+    font-family:var(--display);font-weight:800;font-size:clamp(28px,4vw,50px);
+    letter-spacing:-.025em;line-height:1.04;margin:26px auto 0;max-width:14ch;text-wrap:balance;
+  }
+  .final p{color:var(--muted);margin:22px auto 0;max-width:42ch}
+  .final .btn{margin-top:40px}
+
+  /* inline signup */
+  .signup{margin:34px auto 0;max-width:500px}
+  .signup form{display:flex;gap:10px;align-items:stretch}
+  .signup input{
+    flex:1;background:var(--card);border:1px solid var(--border);border-radius:2px;
+    color:var(--text);font-family:var(--body);font-size:16px;padding:15px 18px;outline:none;
+    transition:border-color .25s;
+  }
+  .signup input::placeholder{color:#6f6880}
+  .signup input:focus{border-color:var(--crimson)}
+  .signup .hint{margin-top:14px;font-size:13px;color:#6f6880;letter-spacing:.02em}
+  .signup .ok{
+    display:none;font-family:var(--display);font-weight:700;font-size:18px;color:var(--text);
+    align-items:center;justify-content:center;gap:10px;padding:6px 0;
+  }
+  .signup .ok .check{color:var(--crimson)}
+  .signup.done form{display:none}
+  .signup.done .hint{display:none}
+  .signup.done .ok{display:flex}
+  @media (max-width:480px){.signup form{flex-direction:column}}
+
+  /* ---------- footer ---------- */
+  footer{border-top:1px solid var(--border);padding:54px 0 60px;background:var(--bg)}
+  .foot-grid{display:flex;justify-content:space-between;align-items:flex-start;gap:40px;flex-wrap:wrap}
+  .foot-grid .wordmark{font-size:20px}
+  .foot-tag{color:var(--muted);font-size:14px;margin-top:14px;max-width:30ch;line-height:1.5}
+  .foot-links{display:flex;gap:40px;flex-wrap:wrap}
+  .foot-col{display:flex;flex-direction:column;gap:12px}
+  .foot-col .h{font-family:var(--display);font-weight:700;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#6f6880;margin-bottom:4px}
+  .foot-col a{color:var(--muted);font-size:15px;transition:color .2s}
+  .foot-col a:hover{color:var(--text)}
+  .foot-col a .invarr{color:var(--crimson)}
+  .legal{margin-top:48px;padding-top:24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;color:#6f6880;font-size:13px}
+
+  /* ---------- reveal animation ---------- */
+  /* base state is VISIBLE so content always shows (no-JS, print, reduced-motion) */
+  @keyframes revealIn{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+  .reveal{opacity:1;transform:none}
+  /* only hide + animate when JS flags .anim (and not reduced-motion) */
+  html.anim .reveal{opacity:0;transform:translateY(26px)}
+  html.anim .reveal.in{animation:revealIn .8s cubic-bezier(.2,.7,.2,1) both}
+  html.anim .reveal.in[data-d="1"]{animation-delay:.08s}
+  html.anim .reveal.in[data-d="2"]{animation-delay:.16s}
+  html.anim .reveal.in[data-d="3"]{animation-delay:.24s}
+  /* once finished, drop the animation so it's a plain static opaque element */
+  html.anim .reveal.shown{opacity:1;transform:none;animation:none}
+</style>
+</head>
+<body>
+
+  <template id="__bundler_thumbnail">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
+      <rect width="240" height="240" fill="#0d0b10"/>
+      <text x="120" y="140" font-family="Archivo,Arial,sans-serif" font-weight="900" font-size="62" letter-spacing="-3" fill="#f4f1f7" text-anchor="middle">ANYA</text>
+      <rect x="186" y="118" width="14" height="14" fill="#e23866"/>
+    </svg>
+  </template>
+
+  <header class="nav" id="nav">
+    <div class="wrap nav-inner">
+      <a href="#top" class="wordmark" aria-label="Anya home">ANYA</a>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <!-- ============ HERO ============ -->
+    <section class="hero" data-screen-label="Hero">
+      <div class="portrait" id="portrait" aria-hidden="true"></div>
+      <div class="ghost-mark" aria-hidden="true">ANYA</div>
+      <div class="wrap hero-inner">
+        <div class="hero-copy">
+          <p class="eyebrow reveal"><span class="dot">●</span>&nbsp; AI accountability partner</p>
+          <h1 class="reveal" data-d="1" style="font-size:clamp(42px,8.5vw,72px)">She's not here<br />to be nice.<br /><span class="accent">She's here to make you better.</span></h1>
+          <p class="sub reveal" data-d="2">An AI girlfriend with a spine. She holds you to it.</p>
+          <div class="hero-cta reveal" data-d="3">
+            <a href="#get" class="btn btn-primary">Get Anya <span class="arr">→</span></a>
+          </div>
+        </div>
+      </div>
+      <div class="scrollcue" aria-hidden="true"><span class="line"></span> Scroll</div>
+    </section>
+
+    <!-- ============ HER VOICE ============ -->
+    <section class="voice" data-screen-label="Her voice">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <p class="eyebrow"><span class="dot">●</span>&nbsp; A taste of her voice</p>
+          <h2>Most habit apps are polite. You forget them by Thursday.</h2>
+        </div>
+        <div class="quotes">
+          <figure class="quote reveal">
+            <figcaption class="tag"><span class="num">01</span>The roast</figcaption>
+            <blockquote>"Tired is not an excuse. It's a choice you made."</blockquote>
+          </figure>
+          <figure class="quote reveal">
+            <figcaption class="tag"><span class="num">02</span>The principle</figcaption>
+            <blockquote>"Control what you can control. Everything else is noise."</blockquote>
+          </figure>
+          <figure class="quote reveal">
+            <figcaption class="tag"><span class="num">03</span>The tease</figcaption>
+            <blockquote>"Look at you — almost impressive. Don't get comfortable."</blockquote>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ HOW IT WORKS ============ -->
+    <section class="how" data-screen-label="How it works">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <p class="eyebrow"><span class="dot">●</span>&nbsp; How it works</p>
+          <h2>A character you don't want to disappoint.</h2>
+        </div>
+      </div>
+      <div class="wrap">
+        <div class="steps">
+          <div class="step reveal"><div class="n">01</div><h3>Check in</h3><p>Thirty seconds a day. Every day. No skipping, no negotiating.</p></div>
+          <div class="step reveal" data-d="1"><div class="n">02</div><h3>Get the truth</h3><p>She remembers your metrics, your goals, and every excuse you've tried.</p></div>
+          <div class="step reveal" data-d="2"><div class="n">03</div><h3>Build the streak</h3><p>Days stack up. So does the cost of being the one who breaks it.</p></div>
+          <div class="step reveal" data-d="3"><div class="n">04</div><h3>She nudges you</h3><p>Go quiet and she comes to find you. Drift isn't an option.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ WHY IT STICKS ============ -->
+    <section class="sticks" data-screen-label="Why it sticks">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <p class="eyebrow"><span class="dot">●</span>&nbsp; Why it sticks</p>
+          <h2>Personality is the retention strategy.</h2>
+          <p class="lead" style="margin-top:20px">Habit trackers churn because nothing is at stake. <em>Anya is someone you answer to.</em></p>
+        </div>
+        <div class="pillars">
+          <div class="pillar reveal"><div class="k">Attachment</div><h3>A persona you won't ghost.</h3><p>A consistent character builds an emotional relationship. Leaving feels like letting someone down — because it is.</p></div>
+          <div class="pillar reveal" data-d="1"><div class="k">Ritual</div><h3>A daily anchor.</h3><p>The 30-second check-in becomes a fixed point in the day. Habit loops are built on rituals, not reminders.</p></div>
+          <div class="pillar reveal" data-d="2"><div class="k">Re-engagement</div><h3>She reaches out first.</h3><p>Proactive nudges close the gap before it becomes churn. Drop-off doesn't get a head start.</p></div>
+        </div>
+        <div class="aside reveal">
+          <p><strong>For investors.</strong> Memorable persona + daily ritual + proactive re-engagement = a habit loop. The LLM is pluggable, so unit economics stay in our hands.</p>
+          <a href="#contact" class="linklike">The retention thesis →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FINAL CTA ============ -->
+    <section class="final hr-top" id="get" data-screen-label="Final CTA">
+      <div class="wrap">
+        <div class="mark reveal">ANYA<span class="accent">.</span></div>
+        <h2 class="reveal" data-d="1">Stop negotiating with yourself.</h2>
+        <p class="reveal" data-d="2">She's already keeping score. The only question is whether you start today or explain yourself tomorrow.</p>
+        <div class="signup reveal" data-d="3" id="signup">
+          <form id="signupForm" novalidate>
+            <input type="email" id="email" placeholder="you@email.com" aria-label="Email address" required />
+            <button type="submit" class="btn btn-primary">Start your streak <span class="arr">→</span></button>
+          </form>
+          <p class="hint">Join the beta. No spam, no excuses.</p>
+          <p class="ok"><span class="check">✓</span> You're on the list. Don't make her wait.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FOOTER ============ -->
+    <footer id="contact">
+      <div class="wrap">
+        <div class="foot-grid">
+          <div>
+            <div class="wordmark">ANYA</div>
+            <p class="foot-tag">An AI accountability partner with a spine. She's not here to be nice.</p>
+          </div>
+          <div class="foot-links">
+            <div class="foot-col">
+              <span class="h">Product</span>
+              <a href="#get">Get Anya</a>
+              <a href="#get">Join the beta</a>
+              <a href="#top">How it works</a>
+            </div>
+            <div class="foot-col">
+              <span class="h">Company</span>
+              <a href="#contact">For investors <span class="invarr">→</span> contact</a>
+              <a href="#contact">Press</a>
+              <a href="#contact">Careers</a>
+            </div>
+            <div class="foot-col">
+              <span class="h">Legal</span>
+              <a href="#contact">Privacy</a>
+              <a href="#contact">Terms</a>
+            </div>
+          </div>
+        </div>
+        <div class="legal">
+          <span>© 2026 Anya Labs. All rights reserved.</span>
+          <span>Built to be unforgettable.</span>
+        </div>
+      </div>
+    </footer>
+
+  </main>
+
+<script>
+  // nav background on scroll
+  const nav = document.getElementById('nav');
+  const onScroll = () => {
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+  };
+  onScroll();
+  window.addEventListener('scroll', onScroll, {passive:true});
+
+  // scroll reveal
+  const reduce = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  if (!reduce && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, {threshold:.12, rootMargin:'0px 0px -6% 0px'});
+    document.querySelectorAll('.reveal').forEach(el => {
+      io.observe(el);
+      el.addEventListener('animationend', () => el.classList.add('shown'), {once:true});
+    });
+    // safety net: reveal anything still hidden, and make all states static
+    setTimeout(() => {
+      document.querySelectorAll('.reveal').forEach(el => el.classList.add('in','shown'));
+    }, 2400);
+  } else {
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('in','shown'));
+  }
+
+  // hero parallax (subtle)
+  const portrait = document.getElementById('portrait');
+  if (!reduce && portrait){
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const y = Math.min(window.scrollY, 900);
+        portrait.style.transform = 'translateY(' + (y * 0.12) + 'px) scale(1.05)';
+        ticking = false;
+      });
+    }, {passive:true});
+    portrait.style.transform = 'scale(1.05)';
+  }
+
+  // signup (client-side only)
+  const form = document.getElementById('signupForm');
+  const signup = document.getElementById('signup');
+  const email = document.getElementById('email');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const v = email.value.trim();
+    const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+    if (!valid){
+      email.style.borderColor = 'var(--crimson)';
+      email.focus();
+      return;
+    }
+    signup.classList.add('done');
+  });
+  email && email.addEventListener('input', () => { email.style.borderColor = ''; });
+</script>
+</body>
+</html>
