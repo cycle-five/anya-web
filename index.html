@@ -467,8 +467,9 @@
         <h2 class="reveal" data-d="1">Stop negotiating with yourself.</h2>
         <p class="reveal" data-d="2">She's already keeping score. The only question is whether you start today or explain yourself tomorrow.</p>
         <div class="signup reveal" data-d="3" id="signup">
-          <form id="signupForm" novalidate>
-            <input type="email" id="email" placeholder="you@email.com" aria-label="Email address" required />
+          <form id="signupForm" action="https://buttondown.com/api/emails/embed-subscribe/anya-ai" method="post" novalidate>
+            <input type="email" id="email" name="email" placeholder="you@email.com" aria-label="Email address" required />
+            <input type="hidden" name="embed" value="1" />
             <button type="submit" class="btn btn-primary">Start your streak <span class="arr">→</span></button>
           </form>
           <p class="hint">Join the beta. No spam, no excuses.</p>
@@ -559,12 +560,18 @@
     portrait.style.transform = 'scale(1.05)';
   }
 
-  // signup (client-side only)
+  // signup → Buttondown embed-subscribe (public endpoint, no API key — safe on a static page)
   const form = document.getElementById('signupForm');
   const signup = document.getElementById('signup');
   const email = document.getElementById('email');
+  const submitBtn = form.querySelector('button[type="submit"]');
+  const hint = signup.querySelector('.hint');
+  const hintDefault = hint ? hint.textContent : '';
+  let submitting = false;
+
   form.addEventListener('submit', (e) => {
     e.preventDefault();
+    if (submitting) return;
     const v = email.value.trim();
     const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
     if (!valid){
@@ -572,9 +579,29 @@
       email.focus();
       return;
     }
-    signup.classList.add('done');
+    submitting = true;
+    submitBtn.disabled = true;
+
+    // mode:'no-cors' + form-encoded body = a "simple" request, so no CORS preflight.
+    // The response is opaque (can't read status), so success is optimistic; only a
+    // genuine network failure rejects, which we catch to offer a retry.
+    fetch(form.action, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: new URLSearchParams({ email: v, embed: '1' })
+    }).then(() => {
+      signup.classList.add('done');
+    }).catch(() => {
+      submitting = false;
+      submitBtn.disabled = false;
+      email.style.borderColor = 'var(--crimson)';
+      if (hint) hint.textContent = "That didn't go through — check your connection and try again.";
+    });
   });
-  email && email.addEventListener('input', () => { email.style.borderColor = ''; });
+  email && email.addEventListener('input', () => {
+    email.style.borderColor = '';
+    if (hint && hint.textContent !== hintDefault) hint.textContent = hintDefault;
+  });
 </script>
 </body>
 </html>
